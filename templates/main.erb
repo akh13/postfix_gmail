@@ -1,0 +1,78 @@
+# THIS FILE IS MANAGED BY PUPPET. DO NOT EDIT!
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+
+# Debian specific:  Specifying a file name will cause the first
+# line of that file to be used as the name.  The Debian default
+# is /etc/mailname.
+#myorigin = /etc/mailname
+
+smtpd_banner = $myhostname ESMTP $mail_name (Demon Core)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+readme_directory = no
+
+# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 2 on
+# fresh installs.
+compatibility_level = 2
+
+# TLS parameters
+smtpd_tls_cert_file=<%= @sslcert %>
+smtpd_tls_key_file=<%= @sslkey %>
+smtp_tls_CAfile = <%= @cacert %>
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+myhostname = <%= @myhostname %>
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+relayhost = [smtp.gmail.com]:587
+mynetworks = <%= @networks %>
+mailbox_size_limit = 0
+recipient_delimiter = +
+mailbox_command = procmail -a "$EXTENSION"
+
+# Enable SASL authentication
+smtp_sasl_auth_enable = yes
+# Disallow methods that allow anonymous authentication
+smtp_sasl_security_options = noanonymous
+# Enable STARTTLS encryption
+smtp_tls_security_level = encrypt
+queue_directory = /var/spool/postfix
+command_directory = /usr/sbin
+data_directory = /var/lib/postfix
+mail_owner = postfix
+inet_interfaces = <%= @interfaces %>
+inet_protocols = all
+mydestination = <%= @destinations %>
+unknown_local_recipient_reject_code = 550
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+debug_peer_level = 2
+debugger_command =
+	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+	 ddd $daemon_directory/$process_name $process_id & sleep 5
+sendmail_path = /usr/sbin/sendmail.postfix
+newaliases_path = /usr/bin/newaliases.postfix
+mailq_path = /usr/bin/mailq.postfix
+setgid_group = postdrop
+html_directory = no
+relayhost = [smtp.gmail.com]:587
+smtp_use_tls = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_tls_security_level = encrypt
+smtp_destination_rate_delay = 10m
+smtp_extra_recipient_limit = 3
