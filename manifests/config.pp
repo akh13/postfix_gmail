@@ -38,15 +38,10 @@ $aliases = $postfix_gmail::aliases.map |$k, $v| {
     content => $aliases,
   }
 
-  exec { 'Refresh aliases' :
-     command => 'postmap /etc/aliases; newaliases',
-     path => ['/usr/sbin'],
-     user => 'root',
-     cwd => '/etc/postfix',
-     creates => '/etc/aliases',
-     subscribe => File['/etc/aliases'],
-     refreshonly => true,
-     notify => Service['postfix'],
+  exec { 'newaliases':
+     path        => ['/usr/bin', '/usr/sbin'],
+     subscribe   => File['/etc/aliases'],
+     refreshonly => true
   }
   
   exec { 'Create password' :

@@ -40,8 +40,6 @@
 #  interfaces => "local",
 #  destinations => ['puppet.server.com', 'puppet', 'puppetreply', 'localhost.localdomain', 'localhost','relaystuff.mail.com'],
 #  networks => ['127.0.0.0/8','[::ffff:127.0.0.0]/104','[::1]/128'],
-#  aliases => { 'root' => 'root@localhost.localdomain',
-#               'postmaster' => 'root'},
 #}
 # Authors
 # -------
