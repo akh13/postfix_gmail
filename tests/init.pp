@@ -18,6 +18,8 @@ $cacert = '/etc/ssl/certs/ca-certificates.crt',
 $interfaces = 'localhost', 
 $destinations = ['localhost','localhost.localdomain','$myhostname']), 
 $networks = ['127.0.0.0/8','[::ffff:127.0.0.0]/104','[::1]/128'],
+$aliases = {
+root => root@localhost.localdomain,})
 {
   include postfix_gmail::packages
   include postfix_gmail::config

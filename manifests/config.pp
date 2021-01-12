@@ -9,6 +9,9 @@ $password = $postfix_gmail::password
 $interfaces = $postfix_gmail::interfaces
 $destinations = join($postfix_gmail::destinations,",")
 $networks = join($postfix_gmail::networks,",")
+$aliases = $postfix_gmail::aliases.map |$k, $v| {
+  "${k}:${v}"
+  }.join("\n")
 
   file { '/etc/postfix/sasl_passwd':
     ensure => file,
@@ -25,6 +28,25 @@ $networks = join($postfix_gmail::networks,",")
     group => root,
     content => template("postfix_gmail/main.erb"),
     notify => Service['postfix'],
+  }
+
+  file { '/etc/aliases':
+    ensure => file,
+    mode => 'u=rw,g=rw',
+    owner => root,
+    group => root,
+    content => $aliases,
+  }
+
+  exec { 'Refresh aliases' :
+     command => 'postmap /etc/aliases; newaliases',
+     path => ['/usr/sbin'],
+     user => 'root',
+     cwd => '/etc/postfix',
+     creates => '/etc/aliases',
+     subscribe => File['/etc/aliases'],
+     refreshonly => true,
+     notify => Service['postfix'],
   }
   
   exec { 'Create password' :
